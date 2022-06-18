@@ -1,7 +1,25 @@
+#--------------------------------------------------#
+# FUNCION PARA CALCULAR LIMITE DE CONTROL INFERIOR #
+#--------------------------------------------------#
+LCI <- function(cl,sigma,L){
+  return(cl-L*sigma)
+}
+#--------------------------------------------------#
+# FUNCION PARA CALCULAR LIMITE DE CONTROL SUPERIOR #
+#--------------------------------------------------#
+LCS <- function(cl,sigma,L){
+  return(cl+L*sigma)
+}
+#--------------------------#
+# FUNCION PARA CALCULAR c4 #
+#--------------------------#
+c4 <- function(n){
+  return(sqrt(2/(n-1))*(gamma(n/2)/gamma((n-1)/2)))
+} 
 #---------------------------------------------------------------#
 # LAS SIGUIENTE FUNCION AYUDA A RECALCULAR LIMITES Y LA MUESTRA #
 #---------------------------------------------------------------#
-data_recalc <- function(datos,idx,n,C4){
+data_recalc <- function(datos,idx,n,C4,L){
   
   datosCombinados <- datos[,-idx] # Se elimina la muestra fuera de control
   # Se recalculan los estadisticos para las muestras
@@ -36,8 +54,8 @@ data_recalc <- function(datos,idx,n,C4){
 #--------------------------------------#
 F1_per <- function(L,m,n,c,mu1){
 require(zeallot)
-set.seed(123)
-L=1;m=25;n=5;mu1=3;c=0.04
+#set.seed(123)
+#L=1;m=25;n=5;mu1=3;c=0.04
 
 numeroSubgruposContaminados <- ceiling(m*c)
 numeroSubgruposLimpios <- m-numeroSubgruposContaminados
@@ -80,25 +98,24 @@ ss <-apply(datosCombinados, 2, sd)
 sbar <- mean(ss) # S barra
 
 C4 <- c4(n) # c4
-sigma_s <-(sbar/cte)*sqrt(1-C4^2)
+sigma_s <-(sbar/C4)*sqrt(1-C4^2)
 sigma_x <- sbar/(sqrt(n)*C4)
 
 
-#L <- 2
 limiteControlInferiorXbar <- LCI(cl=x_barbar,sigma = sigma_x,L=L)
 limiteControlSuperiorXbar <- LCS(cl=x_barbar,sigma = sigma_x,L=L)
 limiteControlInferiorSbar <- LCI(cl=sbar,sigma = sigma_s,L=L)
 limiteControlSuperiorSbar <- LCS(cl=sbar,sigma = sigma_s,L=L)
 
-par(mfrow=c(1,2))
-
-plot(x=1:ncol(datosCombinados),y=ss,type="line",ylim=c(0,2))
-abline(h=c(limiteControlInferiorSbar,limiteControlSuperiorSbar),col="red")
-abline(h=sbar,col="blue")
-
-plot(x=1:ncol(datosCombinados),y=xbars,type="line",ylim=c(-3,3))
-abline(h=c(limiteControlInferiorXbar,limiteControlSuperiorXbar),col="red")
-abline(h=x_barbar,col="blue")
+# par(mfrow=c(1,2))
+# 
+# plot(x=1:ncol(datosCombinados),y=ss,type="line",ylim=c(0,2))
+# abline(h=c(limiteControlInferiorSbar,limiteControlSuperiorSbar),col="red")
+# abline(h=sbar,col="blue")
+# 
+# plot(x=1:ncol(datosCombinados),y=xbars,type="line",ylim=c(-3,3))
+# abline(h=c(limiteControlInferiorXbar,limiteControlSuperiorXbar),col="red")
+# abline(h=x_barbar,col="blue")
 
 criterioParada=TRUE
 numeroIteraciones=0
@@ -136,14 +153,14 @@ while (criterioParada) {
       limiteControlInferiorSbar,limiteControlSuperiorSbar) %<-% data_recalc(datos=datosCombinados,
                                                                             idx=idx_x,
                                                                             n=n,
-                                                                            C4=C4)
+                                                                            C4=C4,L=L)
   }else{
     c(datosCombinados,xbars,ss,sbar,x_barbar,
       limiteControlInferiorXbar,limiteControlSuperiorXbar,
       limiteControlInferiorSbar,limiteControlSuperiorSbar) %<-% data_recalc(datos=datosCombinados,
                                                                             idx=idx_s,
                                                                             n=n,
-                                                                            C4=C4)
+                                                                            C4=C4,L=L)
    
     
     }
