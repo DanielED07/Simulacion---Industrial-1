@@ -54,8 +54,8 @@ data_recalc <- function(datos,idx,n,C4,L){
 #--------------------------------------#
 F1_per <- function(L,m,n,c,mu1){
 require(zeallot)
-#set.seed(123)
-#L=1;m=25;n=5;mu1=3;c=0.04
+# set.seed(12)
+# L=3;m=25;n=5;mu1=3;c=0.04
 
 numeroSubgruposContaminados <- ceiling(m*c)
 numeroSubgruposLimpios <- m-numeroSubgruposContaminados
@@ -101,7 +101,6 @@ C4 <- c4(n) # c4
 sigma_s <-(sbar/C4)*sqrt(1-C4^2)
 sigma_x <- sbar/(sqrt(n)*C4)
 
-
 limiteControlInferiorXbar <- LCI(cl=x_barbar,sigma = sigma_x,L=L)
 limiteControlSuperiorXbar <- LCS(cl=x_barbar,sigma = sigma_x,L=L)
 limiteControlInferiorSbar <- LCI(cl=sbar,sigma = sigma_s,L=L)
@@ -127,9 +126,9 @@ while (criterioParada) {
   idxFueraDeControlS_s <-as.integer(which(c(ss>limiteControlSuperiorSbar)==TRUE)) # Indice fuera de control superior para grafica s
   idxFueraDeControlI_s <-as.integer(which(c(ss<limiteControlInferiorSbar)==TRUE)) # Indice fuera de control inferior para grafica s
   idx_s <- c(idxFueraDeControlS_s,idxFueraDeControlI_s) # indices fuera de control para s
-  nombresMuestra_s <- names(datosCombinados[,idx_s]) # Muestras fuera de control en grafico de s
-  nReales_s <- sum(nombresMuestra_s %in% "C1") # Muestras que disparan señal cuando realmente provienen de una causa asignable
-  nFalsos_s <- sum(nombresMuestra_s %in% c(nombresContaminados,nombresLimpios)) # Muestras que disparan señal cuando realmente provienen de una en control
+  nombresMuestra_s <- names(datosCombinados)[idx_s] # Muestras fuera de control en grafico de s
+  nReales_s <- sum(nombresMuestra_s %in% nombresContaminados) # Muestras que disparan señal cuando realmente provienen de una causa asignable
+  nFalsos_s <- sum(nombresMuestra_s %in% nombresLimpios) # Muestras que disparan señal cuando realmente provienen de una en control
   Ts <- Ts+nReales_s
   Fs <- Fs+nFalsos_s
   #---------------------------------------------#
@@ -141,9 +140,9 @@ while (criterioParada) {
     idxFueraDeControlS_x <-as.integer(which(c(xbars>limiteControlSuperiorXbar)==TRUE)) # Indice fuera de control superior para grafica x
     idxFueraDeControlI_x <-as.integer(which(c(xbars<limiteControlInferiorXbar)==TRUE)) # Indice fuera de control inferior para grafica x
     idx_x <- c(idxFueraDeControlS_x,idxFueraDeControlI_x) # indices fuera de control para x
-    nombresMuestra_x <- names(datosCombinados[,idx_x]) # Muestras fuera de control en grafico de x
-    nReales_x <- sum(nombresMuestra_x %in% "C1") # Muestras que disparan señal cuando realmente provienen de una causa asignable
-    nFalsos_x <- sum(nombresMuestra_x %in% c(nombresContaminados,nombresLimpios)) # Muestras que disparan señal cuando realmente provienen de una en control
+    nombresMuestra_x <- names(datosCombinados)[idx_x] # Muestras fuera de control en grafico de x
+    nReales_x <- sum(nombresMuestra_x %in% nombresContaminados) # Muestras que disparan señal cuando realmente provienen de una causa asignable
+    nFalsos_x <- sum(nombresMuestra_x %in% nombresLimpios) # Muestras que disparan señal cuando realmente provienen de una en control
     Ts <- Ts+nReales_x
     Fs <- Fs+nFalsos_x
     
@@ -215,24 +214,25 @@ plot_ly(data=datos_plot,x=~L,y=~FAP,  color = ~Shift) %>%
 plot_ly(data=datos_plot,x=~L,y=~TAP,  color = ~Shift) %>% 
   add_lines()
 
+#save(datos_plot,file = "datos_plot.RData")
 #-----------------------
 #-----------------------
 #-----------------------
-set.seed(12)
-simulacion <- replicate(100,expr = v_F1_per(L=Ls,m=25,n=5,mu1=1,c=0.04))
-ANI <- apply(simulacion,2,function(x){return(unlist(x["ANI",]))})
-ANIss <- apply(ANI, 2, mean)
-Ts <- apply(simulacion,2,function(x){return(unlist(x["T",]))})
-Tss <- apply(Ts, 2, mean)
-Fs <- apply(simulacion,2,function(x){return(unlist(x["F",]))})
-Fss <- apply(Fs, 2, mean)
-datos <- data.frame("L"=Ls,"ANI"=ANIss,"TAP"=Tss,"FAP"=Fss)
-
-plot_ly(data=datos,x=~L,y=~ANI) %>% 
-  add_lines()
-
-plot_ly(data=datos,x=~L,y=~FAP) %>% 
-  add_lines()
-
-plot_ly(data=datos,x=~L,y=~TAP) %>% 
-  add_lines()
+# set.seed(12)
+# simulacion <- replicate(100,expr = v_F1_per(L=Ls,m=25,n=5,mu1=3,c=0.04))
+# ANI <- apply(simulacion,2,function(x){return(unlist(x["ANI",]))})
+# ANIss <- apply(ANI, 2, mean)
+# Ts <- apply(simulacion,2,function(x){return(unlist(x["T",]))})
+# Tss <- apply(Ts, 2, mean)
+# Fs <- apply(simulacion,2,function(x){return(unlist(x["F",]))})
+# Fss <- apply(Fs, 2, mean)
+# datos <- data.frame("L"=Ls,"ANI"=ANIss,"TAP"=Tss,"FAP"=Fss)
+# 
+# plot_ly(data=datos,x=~L,y=~ANI) %>% 
+#   add_lines()
+# 
+# plot_ly(data=datos,x=~L,y=~FAP) %>% 
+#   add_lines()
+# 
+# plot_ly(data=datos,x=~L,y=~TAP) %>% 
+#   add_lines()
