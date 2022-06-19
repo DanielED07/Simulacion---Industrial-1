@@ -185,7 +185,7 @@ simulacion_1 <- parSapply(cl,Ls, function(i) {
   #------------#
   # SIMULACION #
   #------------#
-  N_sim <- 100 # Numero de replicas
+  N_sim <- 100000 # Numero de replicas
   replicate(N_sim,v_F1_per(L=i,m=25,n=5,mu1=1,c=0.04))
 } )
 #---------------------------------------------------------------------#
@@ -366,7 +366,7 @@ simulacion_2 <- parSapply(cl,Ls, function(i) {
   #------------#
   # SIMULACION #
   #------------#
-  N_sim <- 100 # Numero de replicas
+  N_sim <- 100000 # Numero de replicas
   replicate(N_sim,v_F1_per(L=i,m=25,n=5,mu1=2,c=0.04))
 } )
 #---------------------------------------------------------------------#
@@ -547,7 +547,7 @@ simulacion_3 <- parSapply(cl,Ls, function(i) {
   #------------#
   # SIMULACION #
   #------------#
-  N_sim <- 100 # Numero de replicas
+  N_sim <- 100000 # Numero de replicas
   replicate(N_sim,v_F1_per(L=i,m=25,n=5,mu1=3,c=0.04))
 } )
 stopCluster(cl)
