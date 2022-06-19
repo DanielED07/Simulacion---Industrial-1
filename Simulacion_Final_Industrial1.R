@@ -205,14 +205,30 @@ Fs <- c(Fs_1,Fs_2,Fs_3)
 datos_plot <- data.frame("L"=rep(Ls,3),"ANI"=ANIs,"TAP"=Ts,"FAP"=Fs,"Shift"=rep(c("Shift:1","Shift:2","Shift:3"),each=length(Ls)))
 
 library(plotly)
+
+vline <- function(x = 0, color = "black") {
+  list(
+    type = "line",
+    y0 = 0,
+    y1 = 1,
+    yref = "paper",
+    x0 = x,
+    x1 = x,
+    line = list(color = color, dash="dot")
+  )
+}
+
 plot_ly(data=datos_plot,x=~L,y=~ANI,  color = ~Shift) %>% 
-  add_lines()
+  add_lines() %>% 
+  layout(shapes = list(vline(3)))
 
 plot_ly(data=datos_plot,x=~L,y=~FAP,  color = ~Shift) %>% 
-  add_lines()
+  add_lines() %>% 
+  layout(shapes = list(vline(3)))
 
 plot_ly(data=datos_plot,x=~L,y=~TAP,  color = ~Shift) %>% 
-  add_lines()
+  add_lines() %>% 
+  layout(shapes = list(vline(3)))
 
 #save(datos_plot,file = "datos_plot.RData")
 #-----------------------
